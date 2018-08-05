@@ -66,11 +66,11 @@ public class ClientThreadManager {
      * @return
      */
     public boolean close() {
-        if (!clientReadThread.close()) {
+        if (clientReadThread != null && !clientReadThread.close()) {
             MyLog.e(TAG, "Close the clientreadthread failed!");
             return false;
         }
-        if (!clientWriteThread.close()) {
+        if (clientWriteThread!= null && !clientWriteThread.close()) {
             MyLog.e(TAG, "Close the clientWriteThread failed!");
             return false;
         }
