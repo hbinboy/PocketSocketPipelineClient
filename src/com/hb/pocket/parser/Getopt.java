@@ -1,4 +1,4 @@
-package com.hb.pocket.commandline.parser;
+package com.hb.pocket.parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +88,7 @@ public class Getopt {
                                         currentI = i + 1;
                                         currentJ = 0;
                                         // Check the param is need a value or not.
-                                        if (longOptions[n].getRequireValue() == com.hb.pocket.commandline.parser.LongOpt.REQUIRED_ARGUMENT) {
+                                        if (longOptions[n].getRequireValue() == com.hb.pocket.parser.LongOpt.REQUIRED_ARGUMENT) {
                                             if (argv.length > i + 1 && argv[i + 1] != null && !argv[i + 1].startsWith("-")) {
                                                 value = argv[i + 1];
                                                 currentI = i + 2;
@@ -96,9 +96,9 @@ public class Getopt {
                                                 // Lack a param value then return error.
                                                 return ':';
                                             }
-                                        } else if (longOptions[n].getRequireValue() == com.hb.pocket.commandline.parser.LongOpt.NO_ARGUMENT) {
+                                        } else if (longOptions[n].getRequireValue() == com.hb.pocket.parser.LongOpt.NO_ARGUMENT) {
                                             value = null;
-                                        } else if (longOptions[n].getRequireValue() == com.hb.pocket.commandline.parser.LongOpt.OPTIONAL_ARGUMENT) {
+                                        } else if (longOptions[n].getRequireValue() == com.hb.pocket.parser.LongOpt.OPTIONAL_ARGUMENT) {
                                             if (argv.length > i + 1 && argv[i + 1] != null) {
                                                 if (!argv[i + 1].startsWith("-")) {
                                                     value = argv[i + 1];
@@ -133,7 +133,7 @@ public class Getopt {
                                     currentI = i + 1;
                                     currentJ = j;
                                     // Check the param is need a value or not.
-                                    if (longOptions[n].getRequireValue() == com.hb.pocket.commandline.parser.LongOpt.REQUIRED_ARGUMENT) {
+                                    if (longOptions[n].getRequireValue() == com.hb.pocket.parser.LongOpt.REQUIRED_ARGUMENT) {
                                         if (argv.length > i + 1 && argv[i + 1] != null && !argv[i + 1].startsWith("-")) {
                                             value = argv[i + 1];
                                             currentI = i + 2;
@@ -141,9 +141,9 @@ public class Getopt {
                                             // Lack a param value then return error.
                                             return ':';
                                         }
-                                    } else if (longOptions[n].getRequireValue() == com.hb.pocket.commandline.parser.LongOpt.NO_ARGUMENT) {
+                                    } else if (longOptions[n].getRequireValue() == com.hb.pocket.parser.LongOpt.NO_ARGUMENT) {
                                         value = null;
-                                    } else if (longOptions[n].getRequireValue() == com.hb.pocket.commandline.parser.LongOpt.OPTIONAL_ARGUMENT) {
+                                    } else if (longOptions[n].getRequireValue() == com.hb.pocket.parser.LongOpt.OPTIONAL_ARGUMENT) {
                                         if (argv.length > i + 1 && argv[i + 1] != null) {
                                             if (!argv[i + 1].startsWith("-")) {
                                                 value = argv[i + 1];

@@ -1,9 +1,9 @@
-package com.hb.pocket.commandline;
+package com.hb.pocket.client.commandline;
 
 import com.hb.pocket.client.manager.ClientThreadManager;
-import com.hb.pocket.commandline.command.AddCommand;
-import com.hb.pocket.commandline.command.SendMessageCommand;
-import com.hb.pocket.commandline.parser.LongOpt;
+import com.hb.pocket.client.commandline.command.AddCommand;
+import com.hb.pocket.client.commandline.command.SendMessageCommand;
+import com.hb.pocket.parser.LongOpt;
 import com.hb.utils.log.MyLog;
 
 import java.util.ArrayList;

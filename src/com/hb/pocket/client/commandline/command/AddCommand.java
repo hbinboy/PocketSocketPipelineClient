@@ -1,7 +1,7 @@
-package com.hb.pocket.commandline.command;
+package com.hb.pocket.client.commandline.command;
 
 import com.hb.pocket.client.manager.ClientThreadManager;
-import com.hb.pocket.commandline.parser.LongOpt;
+import com.hb.pocket.parser.LongOpt;
 import com.hb.utils.Utils;
 import com.hb.utils.log.MyLog;
 
