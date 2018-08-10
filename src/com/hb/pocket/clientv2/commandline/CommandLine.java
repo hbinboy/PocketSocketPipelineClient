@@ -42,6 +42,7 @@ public class CommandLine {
         mainCommandMap.put("Del".toLowerCase(), delList);
         mainCommandMap.put("Help".toLowerCase(), null);
         mainCommandMap.put("Version".toLowerCase(), null);
+        mainCommandMap.put("ClearClient".toLowerCase(), null);
     }
 
     private String[] string2Array(String commandLine) {
@@ -106,6 +107,17 @@ public class CommandLine {
         } else if (args[0].toLowerCase().startsWith("Version".toLowerCase())) {
             MyLog.i(TAG, "1.0.0 version.");
         } else if (args[0].toLowerCase().startsWith("Help".toLowerCase())) {
+        } else if (args[0].toLowerCase().startsWith("ClearClient".toLowerCase())) {
+            if (clientThreadManager.getClients() != null && clientThreadManager.getClients().size() > 0) {
+                try {
+                    while (clientThreadManager.getClients().size() > 0){
+                        Client client = clientThreadManager.getClientMap().remove(clientThreadManager.getClients().remove(0));
+                        client.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return false;
     }
