@@ -17,6 +17,7 @@ import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,8 @@ public class Client implements Runnable {
     private Thread thread;
 
     private boolean isStart = false;
+
+    private ConcurrentHashMap<SelectionKey, SelectionKey> selectionKeySelectionKeyBack = new ConcurrentHashMap<>();
 
     ThreadPoolExecutor threadReadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10, Integer.MAX_VALUE, 5,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
@@ -126,8 +129,11 @@ public class Client implements Runnable {
                     Iterator<SelectionKey> iterator = selectionKeys.iterator();
                     while (iterator.hasNext()) {
                         SelectionKey selectionKey = iterator.next();
-                        handle(selectionKey);
                         iterator.remove();
+                        if (selectionKeySelectionKeyBack.containsKey(selectionKey)) {
+                            continue;
+                        }
+                        handle(selectionKey);
                     }
                 }
             }
@@ -151,6 +157,7 @@ public class Client implements Runnable {
         }
         if (selectionKey.isValid() && selectionKey.isReadable()) {
             MyLog.i(TAG, "Read start...");
+            selectionKeySelectionKeyBack.put(selectionKey, selectionKey);
             threadReadPoolExecutor.execute(new ClientSelectorReadTask(channel, new IClientSelectorReadCallback() {
                 @Override
                 public void onStartRead() {
@@ -169,12 +176,14 @@ public class Client implements Runnable {
                         }
                         MyLog.i(TAG, "Close...");
                     }
+                    selectionKeySelectionKeyBack.remove(selectionKey);
                 }
             }));
         }
         if (selectionKey.isValid() && selectionKey.isWritable()) {
             MyLog.i(TAG, "Write start...");
-            threadWritePoolExecutor.execute(new ClientSelectorWriteTask(channel,"Hello\n",  new IClientSelectorWriteCallback() {
+            selectionKeySelectionKeyBack.put(selectionKey, selectionKey);
+            threadWritePoolExecutor.execute(new ClientSelectorWriteTask(channel,"" + "\n",  new IClientSelectorWriteCallback() {
                 @Override
                 public void onStartWrite() {
 
@@ -182,11 +191,11 @@ public class Client implements Runnable {
 
                 @Override
                 public void onEndWrite(boolean isSuccess) {
-
+                    selectionKeySelectionKeyBack.remove(selectionKey);
                 }
             }));
             // Cancel the write model, otherwise , the selector notice the write is already reaptly.
-            selectionKey.interestOps(selectionKey.interestOps() & ~SelectionKey.OP_READ);
+//            selectionKey.interestOps(selectionKey.interestOps() & ~SelectionKey.OP_READ);
         }
     }
 
