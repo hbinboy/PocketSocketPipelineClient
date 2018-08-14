@@ -35,9 +35,16 @@ public class SendMessageCommand extends Command {
                 case 'm' :
                     str = getopt.getOptarg();
                     if (str != null && !str.equals("") && clients != null && clients.size() > 0) {
-                        for (int i = 0; i < clients.size(); i++) {
+                        int count = clients.size();
+                        for (int i = 0; i < count; i++) {
                             try {
-                                clients.get(i).sendMessage(str);
+                                if (clients.get(i).isStart() == true) {
+                                    clients.get(i).sendMessage(str);
+                                } else {
+                                    clientMap.remove(clients.remove(i));
+                                    count--;
+                                    i--;
+                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
