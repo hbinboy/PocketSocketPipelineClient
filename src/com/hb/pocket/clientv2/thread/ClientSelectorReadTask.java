@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by hb on 07/08/2018.
@@ -21,6 +23,8 @@ public class ClientSelectorReadTask implements Runnable {
     private SocketChannel socketChannel;
 
     private IClientSelectorReadCallback iClientSelectorReadCallback;
+
+//    private Map<String, M> message = new HashMap<>();
 
     public ClientSelectorReadTask(SocketChannel socketChannel, IClientSelectorReadCallback iClientSelectorReadCallback) {
         this.socketChannel = socketChannel;
@@ -103,26 +107,29 @@ public class ClientSelectorReadTask implements Runnable {
             int bodyLen = 0;
             int offset = 0;
             buffer.position(0);
-            while (remainLen > 0) {
-                byte[] bufferBak = new byte[len - offset];
-                System.arraycopy(bytes, offset, bufferBak, 0, len - offset);
-//                buffer.get(bufferBak, offset, len - offset);
-                MyLog.d(TAG, "" + len);
-                DataManager dataManager = new DataManager();
-                if (len > 0) {
-                    if (dataManager.getReceiveDataPackageData(bufferBak) != null) {
-                        dataManager.getBody().getData();
-                        offset += dataManager.getHeader().getHeadLen() + dataManager.getHeader().getDataLen();
+            if (remainLen >= 0) {
+                while (remainLen > 0) {
+                    byte[] bufferBak = new byte[len - offset];
+                    System.arraycopy(bytes, offset, bufferBak, 0, len - offset);
+                    MyLog.d(TAG, "" + len);
+                    DataManager dataManager = new DataManager();
+                    if (len > 0) {
+                        if (dataManager.getReceiveDataPackageData(bufferBak) != null) {
+                            dataManager.getBody().getData();
+                            offset += dataManager.getHeader().getHeadLen() + dataManager.getHeader().getDataLen();
 
-                        remainLen = len - offset;
-                        MyLog.i(TAG, dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
+                            remainLen = len - offset;
+                            MyLog.i(TAG, dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
+                        }
+                    }
+                    if (iClientSelectorReadCallback != null && len > 0) {
+                        iClientSelectorReadCallback.onEndRead(dataManager.getBody().getData(), dataManager.getBody().getData().length());
+                    } else {
+                        iClientSelectorReadCallback.onEndRead(null, bodyLen);
                     }
                 }
-                if (iClientSelectorReadCallback != null && len > 0) {
-                    iClientSelectorReadCallback.onEndRead(dataManager.getBody().getData(), dataManager.getBody().getData().length());
-                } else {
-                    iClientSelectorReadCallback.onEndRead(null, bodyLen);
-                }
+            } else {
+                iClientSelectorReadCallback.onEndRead(null, -1);
             }
             return len;
         } catch (IOException e) {
