@@ -38,8 +38,10 @@ public class AddCommand extends Command {
                             int number = Integer.parseInt(str);
                             for (int i = 0; i < number; i++) {
                                 Client c = new Client();
-                                c.init();
-                                c.connect();
+                                if (!c.init() || !c.connect()) {
+                                    MyLog.i(TAG, "Init the client failed.");
+                                    return false;
+                                }
                                 c.startLoop();
                                 clients.add(c);
                                 clientMap.put(c,c);

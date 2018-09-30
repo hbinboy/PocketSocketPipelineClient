@@ -51,32 +51,50 @@ public class Client implements Runnable {
 
     }
 
-    public void init() {
-        initSelector();
-        initSocketChannel();
+    public boolean init() {
+        if (!initSelector()) {
+            return false;
+        }
+        if (!initSocketChannel()) {
+            return false;
+        }
+        return true;
     }
 
-    private void initSelector() {
+    private boolean initSelector() {
         selectorProvider = SelectorProvider.provider();
+        if (selectorProvider == null) {
+            return false;
+        }
         try {
             selector = selectorProvider.openSelector();
+            if (selector == null) {
+                return false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    private void initSocketChannel() {
+    private boolean initSocketChannel() {
         try {
-            selector = selectorProvider.openSelector();
             channel = selectorProvider.openSocketChannel();
+            if (channel == null) {
+                return false;
+            }
             channel.configureBlocking(false);
 
         } catch (ClosedChannelException e) {
             MyLog.i(TAG, "Can not init the client.");
             e.printStackTrace();
+            return false;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     /**
