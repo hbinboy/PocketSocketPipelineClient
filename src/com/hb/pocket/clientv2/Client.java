@@ -89,7 +89,7 @@ public class Client implements Runnable {
             channel.configureBlocking(false);
 
         } catch (ClosedChannelException e) {
-            MyLog.i(TAG, "Can not init the client.");
+            MyLog.e(TAG, "Can not init the client.");
             e.printStackTrace();
             return false;
         } catch (IOException e) {
@@ -107,11 +107,11 @@ public class Client implements Runnable {
         try {
             channel.register(selector, SelectionKey.OP_CONNECT);
             if (channel.connect(new InetSocketAddress(ClientConfig.ip, ClientConfig.port))) {
-                MyLog.i(TAG, "Can not connection server.");
+                MyLog.e(TAG, "Can not connection server.");
                 return false;
             }
         } catch (IOException e) {
-            MyLog.i(TAG, "Can not connection server.");
+            MyLog.e(TAG, "Can not connection server.");
             e.printStackTrace();
             return false;
         }
@@ -203,7 +203,7 @@ public class Client implements Runnable {
             }));
         }
         if (selectionKey.isValid() && selectionKey.isWritable()) {
-            MyLog.i(TAG, "Write start...");
+            MyLog.d(TAG, "Write start...");
             Map<String, Data> stringDataMap = new ConcurrentHashMap<>();
             selectionKeySelectionKeyBack.put(selectionKey, stringDataMap);
             threadWritePoolExecutor.execute(new ClientSelectorWriteTask(channel,"" + "\n",  new IClientSelectorWriteCallback() {

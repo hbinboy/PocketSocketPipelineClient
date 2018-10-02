@@ -40,7 +40,7 @@ public class ClientSelectorReadTask implements Runnable {
                 if (iClientSelectorReadCallback != null) {
                     iClientSelectorReadCallback.onStartRead();
                 }
-                MyLog.i(TAG, "Read the package length is: " + read(socketChannel, iClientSelectorReadCallback));
+                MyLog.d(TAG, "Read the package length is: " + read(socketChannel, iClientSelectorReadCallback));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class ClientSelectorReadTask implements Runnable {
         try {
             int len = channel.read(buffer);
             if (len > 0) {
-                MyLog.i(TAG, new String(buffer.array(), 0, len, Charset.forName("UTF-8"))); // buffer.array()：get the HeapByteFuffer raw data.
+                MyLog.d(TAG, new String(buffer.array(), 0, len, Charset.forName("UTF-8"))); // buffer.array()：get the HeapByteFuffer raw data.
             }
             if (iClientSelectorReadCallback != null && len > 0) {
                 iClientSelectorReadCallback.onEndRead(new String(buffer.array(), 0, len, Charset.forName("UTF-8")), len);
@@ -121,7 +121,7 @@ public class ClientSelectorReadTask implements Runnable {
                             offset += dataManager.getHeader().getHeadLen() + dataManager.getHeader().getDataLen();
 
                             remainLen = len - offset;
-                            MyLog.i(TAG, "Split data display: "+ dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
+                            MyLog.d(TAG, "Split data display: "+ dataManager.getBody().getData()); // buffer.array()：get the HeapByteFuffer raw data.
                         }
                     }
                     if (iClientSelectorReadCallback != null && len > 0) {
