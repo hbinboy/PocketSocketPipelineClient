@@ -100,7 +100,7 @@ public class ClientSelectorWriteTask implements Runnable {
     private boolean writeDataWithHeader(SocketChannel channel, String msg) throws IOException {
         DataManager dataManager = new DataManager();
         String wholeMessageMD5 = dataManager.md5(msg);
-        String[] result = dataManager.spliteString(msg, 7);
+        String[] result = dataManager.spliteString(msg);
 
         try {
             for (int i = 0; i < result.length; i++) {
