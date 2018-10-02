@@ -4,6 +4,7 @@ import com.hb.pocket.clientv2.thread.ClientSelectorReadTask;
 import com.hb.pocket.clientv2.thread.ClientSelectorWriteTask;
 import com.hb.pocket.clientv2.thread.callback.IClientSelectorReadCallback;
 import com.hb.pocket.clientv2.thread.callback.IClientSelectorWriteCallback;
+import com.hb.pocket.data.Data;
 import com.hb.utils.config.ClientConfig;
 import com.hb.utils.log.MyLog;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
@@ -39,7 +41,7 @@ public class Client implements Runnable {
 
     private boolean isStart = false;
 
-    private ConcurrentHashMap<SelectionKey, SelectionKey> selectionKeySelectionKeyBack = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<SelectionKey, Map<String, Data>> selectionKeySelectionKeyBack = new ConcurrentHashMap<>();
 
     ThreadPoolExecutor threadReadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10, Integer.MAX_VALUE, 5,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
@@ -175,8 +177,9 @@ public class Client implements Runnable {
         }
         if (selectionKey.isValid() && selectionKey.isReadable()) {
             MyLog.i(TAG, "Read start...");
-            selectionKeySelectionKeyBack.put(selectionKey, selectionKey);
-            threadReadPoolExecutor.execute(new ClientSelectorReadTask(channel, new IClientSelectorReadCallback() {
+            Map<String, Data> stringDataMap = new ConcurrentHashMap<>();
+            selectionKeySelectionKeyBack.put(selectionKey, stringDataMap);
+            threadReadPoolExecutor.execute(new ClientSelectorReadTask(channel, stringDataMap, new IClientSelectorReadCallback() {
                 @Override
                 public void onStartRead() {
 
@@ -186,6 +189,7 @@ public class Client implements Runnable {
                 public void onEndRead(String data, int length) {
                     if (length >= 0) {
                         selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_READ); // Listen the write modle,
+                        MyLog.i(TAG, "The whole data display: "+ data);
                     } else if (length < 0) {
                         try {
                             close();
@@ -200,7 +204,8 @@ public class Client implements Runnable {
         }
         if (selectionKey.isValid() && selectionKey.isWritable()) {
             MyLog.i(TAG, "Write start...");
-            selectionKeySelectionKeyBack.put(selectionKey, selectionKey);
+            Map<String, Data> stringDataMap = new ConcurrentHashMap<>();
+            selectionKeySelectionKeyBack.put(selectionKey, stringDataMap);
             threadWritePoolExecutor.execute(new ClientSelectorWriteTask(channel,"" + "\n",  new IClientSelectorWriteCallback() {
                 @Override
                 public void onStartWrite() {
