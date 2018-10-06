@@ -43,6 +43,10 @@ public class Client implements Runnable {
 
     private ConcurrentHashMap<SelectionKey, Map<String, Data>> selectionKeySelectionKeyBack = new ConcurrentHashMap<>();
 
+    private String ip = "";
+
+    private int port = -1;
+
     ThreadPoolExecutor threadReadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() + 10, Integer.MAX_VALUE, 5,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
@@ -106,9 +110,16 @@ public class Client implements Runnable {
     public boolean connect() {
         try {
             channel.register(selector, SelectionKey.OP_CONNECT);
-            if (channel.connect(new InetSocketAddress(ClientConfig.ip, ClientConfig.port))) {
-                MyLog.e(TAG, "Can not connection server.");
-                return false;
+            if (ip != null && !ip.equals("") && port > 0) {
+                if (channel.connect(new InetSocketAddress(ip, port))) {
+                    MyLog.e(TAG, "Can not connection server.");
+                    return false;
+                }
+            } else {
+                if (channel.connect(new InetSocketAddress(ClientConfig.ip, ClientConfig.port))) {
+                    MyLog.e(TAG, "Can not connection server.");
+                    return false;
+                }
             }
         } catch (IOException e) {
             MyLog.e(TAG, "Can not connection server.");
@@ -254,5 +265,13 @@ public class Client implements Runnable {
 
     public boolean isStart(){
         return isStart;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }

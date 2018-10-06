@@ -33,6 +33,8 @@ public class CommandLine {
         mainCommandMap.put("Exit".toLowerCase(), null);
         List<LongOpt> addList = new ArrayList<>();
         addList.add(new LongOpt("number", LongOpt.OPTIONAL_ARGUMENT, 'n',"Create a new clinet and connection to the server."));
+        addList.add(new LongOpt("ip", LongOpt.OPTIONAL_ARGUMENT, 'i',"The connection to the server's IP."));
+        addList.add(new LongOpt("port", LongOpt.OPTIONAL_ARGUMENT, 'p',"The connection to the server's port."));
         mainCommandMap.put("Add".toLowerCase(), addList);
         List<LongOpt> sendMessageList = new ArrayList<>();
         sendMessageList.add(new LongOpt("message", LongOpt.OPTIONAL_ARGUMENT, 'm', "Send a message to the server."));
@@ -85,16 +87,26 @@ public class CommandLine {
                 }
                 clientThreadManager.getClients().clear();
                 clientThreadManager.getClientMap().clear();
+            } else {
+                MyLog.i(TAG, "Not support this command!");
             }
             return true;
         } else if (args[0].toLowerCase().startsWith("Add".toLowerCase())) {
-            AddCommand addCommand = new AddCommand("Add", mainCommandMap.get(args[0].toLowerCase()),commandLine, "-:n",
-                    clientThreadManager.getClients(), clientThreadManager.getClientMap());
-            addCommand.excute();
+            if (mainCommandMap.get(args[0].toLowerCase()) != null && mainCommandMap.get(args[0].toLowerCase()).size() != 0) {
+                AddCommand addCommand = new AddCommand("Add", mainCommandMap.get(args[0].toLowerCase()), commandLine, "-:n",
+                        clientThreadManager.getClients(), clientThreadManager.getClientMap());
+                addCommand.excute();
+            } else {
+                MyLog.i(TAG, "Not support this command!");
+            }
         } else if (args[0].toLowerCase().startsWith("SendMessage".toLowerCase())) {
-            SendMessageCommand sendMessage = new SendMessageCommand("SendMessage", mainCommandMap.get(args[0].toLowerCase()), commandLine, "-:m",
-                    clientThreadManager.getClients(), clientThreadManager.getClientMap());
-            sendMessage.excute();
+            if (mainCommandMap.get(args[0].toLowerCase()) != null && mainCommandMap.get(args[0].toLowerCase()).size() != 0) {
+                SendMessageCommand sendMessage = new SendMessageCommand("SendMessage", mainCommandMap.get(args[0].toLowerCase()), commandLine, "-:m",
+                        clientThreadManager.getClients(), clientThreadManager.getClientMap());
+                sendMessage.excute();
+            } else {
+                MyLog.i(TAG, "Not support this command!");
+            }
         } else if (args[0].toLowerCase().startsWith("Del".toLowerCase())) {
             if (clientThreadManager.getClients() != null && clientThreadManager.getClients().size() > 0) {
                 try {
@@ -103,6 +115,8 @@ public class CommandLine {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            } else {
+                MyLog.i(TAG, "Not support this command!");
             }
         } else if (args[0].toLowerCase().startsWith("Version".toLowerCase())) {
             MyLog.i(TAG, "1.0.0 version.");
@@ -117,7 +131,11 @@ public class CommandLine {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            } else {
+                MyLog.i(TAG, "Not support this command!");
             }
+        } else {
+            MyLog.i(TAG, "Not support this command!");
         }
         return false;
     }
